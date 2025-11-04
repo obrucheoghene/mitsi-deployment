@@ -1,6 +1,7 @@
 services:
   signaling:
     image: obrucheoghene/mitsi-signaling
+    pull_policy: always
     ports:
       - "8000:8000"
     environment:
@@ -12,6 +13,7 @@ services:
     restart: unless-stopped
   media:
     image: obrucheoghene/mitsi-media
+    pull_policy: always
     ports:
       - "4000:4000"
       - "2000-2100:2000-2100/udp"
@@ -30,8 +32,13 @@ services:
     restart: unless-stopped
   web:
     image: obrucheoghene/mitsi-web
+    pull_policy: always
     ports:
       - "3500:80"
+    environment:
+      - VITE_REACT_APP_SIGNALING_SERVER="https://sn1.mitsi.app"
+      - VITE_REACT_APP_API_SERVER="https://api.mitsi.app"
+      - VITE_REACT_APP_API_KEY="your_api_key"
     depends_on:
       - signaling
     networks:
