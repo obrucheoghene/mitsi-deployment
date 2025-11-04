@@ -23,7 +23,7 @@ services:
       - RTC_MIN_PORT=2000
       - RTC_MAX_PORT=2100
       - SERVER_ADDRESS=media
-      - ANNOUNCED_ADDRESS=102.219.189.126
+      - ANNOUNCED_ADDRESS=****
     depends_on:
       - signaling
       - redis
