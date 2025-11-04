@@ -1,0 +1,56 @@
+services:
+  signaling:
+    image: obrucheoghene/mitsi-signaling
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_SERVER_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - mitsi-network
+    restart: unless-stopped
+  media:
+    image: obrucheoghene/mitsi-media
+    ports:
+      - "4000:4000"
+      - "2000-2500:2000-2500/udp"
+      - "50052:50052"
+    environment:
+      - REDIS_SERVER_URL=redis://redis:6379
+      - RTC_MIN_PORT=2000
+      - RTC_MAX_PORT=2500
+      - SERVER_ADDRESS=media
+      - ANNOUNCED_ADDRESS=192.168.0.187
+    depends_on:
+      - signaling
+      - redis
+    networks:
+      - mitsi-network
+    restart: unless-stopped
+  web:
+    image: obrucheoghene/mitsi-web
+    ports:
+      - "3500:80"
+    depends_on:
+      - signaling
+    networks:
+      - mitsi-network
+    restart: unless-stopped
+  redis:
+    image: "redis:8-alpine"
+    container_name: mitsi-redis
+    ports:
+      - "6378:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - mitsi-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  mitsi-network:
+    driver: bridge
